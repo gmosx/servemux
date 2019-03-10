@@ -69,14 +69,18 @@ func (m *ServeMux) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 }
 
 // ParamValue returns the value associated with key.
-func ParamValue(r *http.Request, key string) (string, bool) {
+func ParamValue(r *http.Request, key string) string {
 	params := r.Context().Value("params")
 	if params == nil {
-		return "", false
+		return ""
 	}
 
 	v, found := params.(map[string]string)[key]
-	return v, found
+	if !found {
+		return ""
+	}
+
+	return v
 }
 
 // NotFoundHandler to be defined.

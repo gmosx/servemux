@@ -56,11 +56,10 @@ func TestMux(t *testing.T) {
 }
 
 func paramDumpHandler(w http.ResponseWriter, r *http.Request) {
-	id, found := ParamValue(r, "id")
-	if found {
-		fmt.Fprintf(w, id)
-	}
+	id := ParamValue(r, "id")
+	fmt.Fprintf(w, id)
 }
+
 func TestServeHTTP(t *testing.T) {
 	mux := New()
 	mux.HandleFunc("/accounts/:id/posts", paramDumpHandler)

@@ -59,17 +59,15 @@ func TestGetWithParams(t *testing.T) {
 	key := "/accounts/:id/comments"
 	_ = trie.Put(key, ih)
 
-	// val, _ := trie.Get("/accounts/123/comments")
-	// if val != ih {
-	// 	t.Errorf("expected index, got %s", val)
-	// }
-
 	val, params := trie.GetWithParams("/accounts/123/comments")
 	if val != ih {
-		t.Errorf("expected index, got %s", val)
+		t.Errorf("expected 'index', got %s", val)
 	}
-	_, found := params["id"]
+	id, found := params["id"]
 	if !found {
-		t.Errorf("--- %v", params)
+		t.Error("'id' parameter not found")
+	}
+	if id != "123" {
+		t.Errorf("expected id=123, got %s", id)
 	}
 }
