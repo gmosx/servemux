@@ -8,8 +8,6 @@ import (
 // Value represents a trie value.
 type Value = http.Handler
 
-var nilValue = NotFoundHandler{}
-
 // Trie is a prefix search tree.
 type Trie struct {
 	value    Value
@@ -86,7 +84,7 @@ func (t *Trie) Get(key string) (Value, bool) {
 	for part, i := splitter(key, 0); ; part, i = splitter(key, i) {
 		node = selectChild(node, part)
 		if node == nil {
-			return nilValue, false
+			return nil, false
 		}
 		if i == -1 {
 			break
