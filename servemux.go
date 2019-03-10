@@ -1,6 +1,7 @@
 package servemux
 
 import (
+	"context"
 	"net/http"
 	"sync"
 )
@@ -45,6 +46,24 @@ func (m *ServeMux) Handler(r *http.Request) (handler http.Handler, pattern strin
 	}
 
 	return h, ""
+}
+
+func (m *ServeMux) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	p := r.URL.Path
+	h, params := m.trie.GetWithParams(p)
+
+	if h == nil {
+		notFoundHandler.ServeHTTP(w, r)
+		return
+	}
+
+	if params != nil {
+		ctx := context.WithValue(r.Context(), "params", params)
+		h.ServeHTTP(w, r.WithContext(ctx))
+		return
+	}
+
+	h.ServeHTTP(w, r)
 }
 
 // NotFoundHandler to be defined.

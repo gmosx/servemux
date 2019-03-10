@@ -1,7 +1,9 @@
 package servemux
 
 import (
+	"fmt"
 	"net/http"
+	"net/http/httptest"
 	"testing"
 )
 
@@ -50,5 +52,28 @@ func TestMux(t *testing.T) {
 	h = getHandler(t, mux, "/accounts/123/posts")
 	if h != ph {
 		t.Errorf("Expected 'comments', got %s", h)
+	}
+}
+
+func paramDumpHandler(w http.ResponseWriter, r *http.Request) {
+	params := r.Context().Value("params").(map[string]string)
+	fmt.Fprintf(w, params["id"])
+}
+func TestServeHTTP(t *testing.T) {
+	mux := New()
+	mux.HandleFunc("/accounts/:id/posts", paramDumpHandler)
+
+	r, err := http.NewRequest("GET", "/accounts/123/posts", nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	w := httptest.NewRecorder()
+
+	mux.ServeHTTP(w, r)
+
+	s := w.Body.String()
+	if s != "123" {
+		t.Errorf("Expected 123, got %s", s)
 	}
 }
