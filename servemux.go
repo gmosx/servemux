@@ -35,6 +35,8 @@ func (m *ServeMux) HandleFunc(pattern string, handler func(http.ResponseWriter, 
 	m.Handle(pattern, http.HandlerFunc(handler))
 }
 
+// TODO: Deprecate this?
+
 // Handler returns the handler to use for the given request, consulting r.Method,
 // r.Host, and r.URL.Path. It always returns a non-nil handler.
 func (m *ServeMux) Handler(r *http.Request) (handler http.Handler, pattern string) {
@@ -58,12 +60,23 @@ func (m *ServeMux) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if params != nil {
-		ctx := context.WithValue(r.Context(), "params", params)
+		ctx := context.WithValue(r.Context(), "params", params) // TODO: fix the warning!
 		h.ServeHTTP(w, r.WithContext(ctx))
 		return
 	}
 
 	h.ServeHTTP(w, r)
+}
+
+// ParamValue returns the value associated with key.
+func ParamValue(r *http.Request, key string) (string, bool) {
+	params := r.Context().Value("params")
+	if params == nil {
+		return "", false
+	}
+
+	v, found := params.(map[string]string)[key]
+	return v, found
 }
 
 // NotFoundHandler to be defined.
