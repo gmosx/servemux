@@ -6,6 +6,10 @@ import (
 	"sync"
 )
 
+type key struct{}
+
+var paramsKey key
+
 // ServeMux to be defined
 type ServeMux struct {
 	mu   sync.RWMutex
@@ -60,7 +64,7 @@ func (m *ServeMux) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if params != nil {
-		ctx := context.WithValue(r.Context(), "params", params) // TODO: fix the warning!
+		ctx := context.WithValue(r.Context(), paramsKey, params)
 		h.ServeHTTP(w, r.WithContext(ctx))
 		return
 	}
@@ -70,7 +74,7 @@ func (m *ServeMux) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 // ParamValue returns the value associated with key.
 func ParamValue(r *http.Request, key string) string {
-	params := r.Context().Value("params")
+	params := r.Context().Value(paramsKey)
 	if params == nil {
 		return ""
 	}
