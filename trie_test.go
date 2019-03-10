@@ -33,7 +33,7 @@ func TestGet(t *testing.T) {
 	key := "/"
 	_ = trie.Put(key, ih)
 
-	val, _ := trie.Get(key)
+	val := trie.Get(key)
 	if val != ih {
 		t.Errorf("expected index, got %s", val)
 	}
@@ -42,16 +42,34 @@ func TestGet(t *testing.T) {
 	dh := testHandler{name: "deep"}
 	_ = trie.Put(key, dh)
 
-	val, found := trie.Get(key)
-	if !found {
-		t.Errorf("expected to find %s", key)
-	}
+	val = trie.Get(key)
 	if val != dh {
 		t.Errorf("expected index, got %s", val)
 	}
 
-	val, found = trie.Get("/not/found")
-	if found {
+	val = trie.Get("/not/found")
+	if val != nil {
 		t.Errorf("expected no value, got %s", val)
+	}
+}
+
+func TestGetWithParams(t *testing.T) {
+	trie := NewTrie()
+
+	key := "/accounts/:id/comments"
+	_ = trie.Put(key, ih)
+
+	// val, _ := trie.Get("/accounts/123/comments")
+	// if val != ih {
+	// 	t.Errorf("expected index, got %s", val)
+	// }
+
+	val, params := trie.GetWithParams("/accounts/123/comments")
+	if val != ih {
+		t.Errorf("expected index, got %s", val)
+	}
+	_, found := params["id"]
+	if !found {
+		t.Errorf("--- %v", params)
 	}
 }

@@ -36,15 +36,15 @@ func (m *ServeMux) HandleFunc(pattern string, handler func(http.ResponseWriter, 
 
 // Handler returns the handler to use for the given request, consulting r.Method,
 // r.Host, and r.URL.Path. It always returns a non-nil handler.
-func (m *ServeMux) Handler(r *http.Request) (h http.Handler, pattern string) {
+func (m *ServeMux) Handler(r *http.Request) (handler http.Handler, pattern string) {
 	p := r.URL.Path
-	handler, found := m.trie.Get(p)
+	h := m.trie.Get(p)
 
-	if !found {
+	if h == nil {
 		return notFoundHandler, "" // TODO: something better needed.
 	}
 
-	return handler, ""
+	return h, ""
 }
 
 // NotFoundHandler to be defined.

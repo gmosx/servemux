@@ -48,19 +48,46 @@ func (t *Trie) Put(key string, val Value) bool {
 }
 
 // Get returns the value associated with the given key.
-func (t *Trie) Get(key string) (Value, bool) {
+func (t *Trie) Get(key string) Value {
 	node := t
 	for part, i := splitter(key, 0); ; part, i = splitter(key, i) {
-		node = selectChild(node, part)
+		node, _ = selectChild(node, part)
 		if node == nil {
-			return nil, false
+			return nil
 		}
 		if i == -1 {
 			break
 		}
 	}
 
-	return node.value, true
+	return node.value
+}
+
+// GetWithParams returns the value associated with the given key.
+func (t *Trie) GetWithParams(key string) (Value, map[string]string) {
+	var params map[string]string
+	node := t
+	for part, i := splitter(key, 0); ; part, i = splitter(key, i) {
+		n, isParamMatch := selectChild(node, part)
+		if n == nil {
+			return nil, params
+		}
+		if isParamMatch {
+			if params == nil {
+				params = map[string]string{
+					node.param[1:]: part,
+				}
+			} else {
+				params[node.param[1:]] = part
+			}
+		}
+		node = n
+		if i == -1 {
+			break
+		}
+	}
+
+	return node.value, params
 }
 
 func splitter(path string, start int) (segment string, next int) {
@@ -77,17 +104,17 @@ func splitter(path string, start int) (segment string, next int) {
 	return path[start+1 : start+end+1], start + end + 1
 }
 
-func selectChild(node *Trie, key string) *Trie {
+func selectChild(node *Trie, key string) (*Trie, bool) {
 	c, found := node.children[key]
 	if found {
-		return c
+		return c, false
 	}
 
 	if node.param != "" {
-		return node.children[node.param]
+		return node.children[node.param], true
 	}
 
-	return nil
+	return nil, false
 }
 
 func isParam(key string) bool {
