@@ -12,14 +12,16 @@ var paramsKey key
 
 // ServeMux to be defined
 type ServeMux struct {
-	mu   sync.RWMutex
-	trie *Trie
+	mu              sync.RWMutex
+	trie            *Trie
+	NotFoundHandler http.Handler
 }
 
 // New allocates and returns a new ServeMux.
 func New() *ServeMux {
 	return &ServeMux{
-		trie: NewTrie(),
+		trie:            NewTrie(),
+		NotFoundHandler: http.HandlerFunc(http.NotFound),
 	}
 }
 
@@ -39,8 +41,6 @@ func (m *ServeMux) HandleFunc(pattern string, handler func(http.ResponseWriter, 
 	m.Handle(pattern, http.HandlerFunc(handler))
 }
 
-// TODO: Deprecate this?
-
 // Handler returns the handler to use for the given request, consulting r.Method,
 // r.Host, and r.URL.Path. It always returns a non-nil handler.
 func (m *ServeMux) Handler(r *http.Request) (handler http.Handler, pattern string) {
@@ -48,7 +48,7 @@ func (m *ServeMux) Handler(r *http.Request) (handler http.Handler, pattern strin
 	h := m.trie.Get(p)
 
 	if h == nil {
-		return notFoundHandler, "" // TODO: something better needed.
+		return m.NotFoundHandler, ""
 	}
 
 	return h, ""
@@ -59,7 +59,7 @@ func (m *ServeMux) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	h, params := m.trie.GetWithParams(p)
 
 	if h == nil {
-		notFoundHandler.ServeHTTP(w, r)
+		m.NotFoundHandler.ServeHTTP(w, r)
 		return
 	}
 
@@ -86,15 +86,3 @@ func ParamValue(r *http.Request, key string) string {
 
 	return v
 }
-
-// NotFoundHandler to be defined.
-type NotFoundHandler struct {
-}
-
-// ServeHTML to be defined.
-func (h NotFoundHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	// TODO: something better!
-	w.Write([]byte("Not found"))
-}
-
-var notFoundHandler = NotFoundHandler{}

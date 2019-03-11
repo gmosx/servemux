@@ -91,8 +91,7 @@ func (t *Trie) GetWithParams(key string) (Value, map[string]string) {
 }
 
 func splitter(path string, start int) (segment string, next int) {
-	// TODO: remove some overzealous checks?
-	if len(path) == 0 || start < 0 || start > len(path)-1 {
+	if /* len(path) == 0 || start < 0 || */ start > len(path)-1 {
 		return "", -1
 	}
 
