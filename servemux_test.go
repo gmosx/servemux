@@ -60,7 +60,7 @@ func paramDumpHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, id)
 }
 
-func TestServeHTTP(t *testing.T) {
+func TestServeHTTPWithParams(t *testing.T) {
 	mux := New()
 	mux.HandleFunc("/accounts/:id/posts", paramDumpHandler)
 

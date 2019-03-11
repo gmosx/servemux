@@ -118,5 +118,10 @@ func selectChild(node *Trie, key string) (*Trie, bool) {
 }
 
 func isParam(key string) bool {
-	return strings.HasPrefix(key, ":") // TODO: optimize me!
+	// return strings.HasPrefix(key, ":")
+
+	if len(key) == 0 {
+		return false
+	}
+	return key[0] == ':'
 }
