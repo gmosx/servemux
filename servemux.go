@@ -47,6 +47,8 @@ func (m *ServeMux) Handler(r *http.Request) (handler http.Handler, pattern strin
 	p := r.URL.Path
 	h := m.trie.Get(p)
 
+	// TODO: return matched pattern string.
+
 	if h == nil {
 		return m.NotFoundHandler, ""
 	}

@@ -56,12 +56,14 @@ func TestGet(t *testing.T) {
 func TestGetWithParams(t *testing.T) {
 	trie := NewTrie()
 
+	ch := testHandler{name: "commends"}
+
 	key := "/accounts/:id/comments"
-	_ = trie.Put(key, ih)
+	_ = trie.Put(key, ch)
 
 	val, params := trie.GetWithParams("/accounts/123/comments")
-	if val != ih {
-		t.Errorf("expected 'index', got %s", val)
+	if val != ch {
+		t.Errorf("expected 'comments', got %s", val)
 	}
 	id, found := params["id"]
 	if !found {
@@ -69,5 +71,39 @@ func TestGetWithParams(t *testing.T) {
 	}
 	if id != "123" {
 		t.Errorf("expected id=123, got %s", id)
+	}
+
+	ph := testHandler{name: "posts"}
+
+	key = "/accounts/:id/posts/:filter"
+	_ = trie.Put(key, ph)
+
+	val, params = trie.GetWithParams("/accounts/314/posts/date")
+	if val != ph {
+		t.Errorf("expected 'posts', got %s", val)
+	}
+	id, found = params["id"]
+	if !found {
+		t.Error("'id' parameter not found")
+	}
+	if id != "314" {
+		t.Errorf("expected id=314, got %s", id)
+	}
+	filter, found := params["filter"]
+	if !found {
+		t.Error("'filter' parameter not found")
+	}
+	if filter != "date" {
+		t.Errorf("expected filter=date, got %s", filter)
+	}
+
+	sh := testHandler{name: "sign-in"}
+
+	key = "/accounts/sign-in"
+	_ = trie.Put(key, sh)
+
+	val = trie.Get("/accounts/sign-in")
+	if val != sh {
+		t.Errorf("expected 'sign-in', got %s", val)
 	}
 }
