@@ -47,6 +47,14 @@ func TestGet(t *testing.T) {
 		t.Errorf("expected index, got %s", val)
 	}
 
+	key = "/a/deep/path/"
+	_ = trie.Put(key, dh)
+
+	val, _ = trie.Get(key)
+	if val != dh {
+		t.Errorf("expected index, got %s", val)
+	}
+
 	val, _ = trie.Get("/not/found")
 	if val != nil {
 		t.Errorf("expected no value, got %s", val)

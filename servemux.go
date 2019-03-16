@@ -52,9 +52,7 @@ func (m *ServeMux) HandleFunc(pattern string, handler func(http.ResponseWriter, 
 }
 
 func (m *ServeMux) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	p := r.URL.Path
-	h, args := m.trie.Get(p)
-
+	h, args := m.trie.Get(r.URL.Path)
 	if h == nil {
 		m.NotFoundHandler.ServeHTTP(w, r)
 		return

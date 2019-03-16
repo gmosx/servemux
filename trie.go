@@ -26,6 +26,7 @@ func NewTrie() *Trie {
 // false if it replaces an existing value.
 func (t *Trie) Put(key string, val TrieValue) bool {
 	node := t
+
 	for segment, i := sliceSegmentAt(key, 0); ; segment, i = sliceSegmentAt(key, i) {
 		if len(segment) != 0 { // TODO: remove this test?
 			// Check if the segment is a parameter.
@@ -46,6 +47,7 @@ func (t *Trie) Put(key string, val TrieValue) bool {
 		}
 
 		node = child
+
 		if i == -1 {
 			break
 		}
@@ -110,7 +112,6 @@ func sliceSegmentAt(path string, start int) (segment string, next int) {
 	return path[start+1 : start+end+1], start + end + 1
 }
 
-// selectChild selects the next child for inspection.
 func selectChild(node *Trie, key string) *Trie {
 	c, found := node.children[key]
 	if found {
