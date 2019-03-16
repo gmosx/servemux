@@ -69,7 +69,7 @@ func (m *ServeMux) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	h.ServeHTTP(w, r)
 }
 
-// Value returns the value associated with key.
+// Value returns the argument value associated with key.
 func Value(r *http.Request, key string) string {
 	args := r.Context().Value(argsKey)
 	if args == nil {
