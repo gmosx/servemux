@@ -20,7 +20,15 @@ func postsHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 mux := servemux.New()
+
+// Example matches:
+// /accounts/1/posts
+// /accounts/2/posts
 mux.HandleFunc("/accounts/:id/posts", postsHandler)
+
+// Example matches:
+// /static/img/logo.png
+// /static/favicon.ico
 mux.Handle("/static/*", http.StripPrefix("/static/", http.FileServer(http.Dir("./static"))))
 
 log.Fatal(http.ListenAndServe(":8080", mux))
