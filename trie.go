@@ -22,7 +22,8 @@ func NewTrie() *Trie {
 	}
 }
 
-// Put inserts a new value into the tree.
+// Put inserts a new value into the tree. Returns true if it inserts a new value,
+// false if it replaces an existing value.
 func (t *Trie) Put(key string, val Value) bool {
 	node := t
 	for part, i := splitter(key, 0); ; part, i = splitter(key, i) {
@@ -126,13 +127,4 @@ func selectChild(node *Trie, key string) (*Trie, bool) {
 	}
 
 	return nil, false
-}
-
-func isParam(key string) bool {
-	// return strings.HasPrefix(key, ":")
-
-	if len(key) == 0 {
-		return false
-	}
-	return key[0] == ':' || key[0] == '*'
 }

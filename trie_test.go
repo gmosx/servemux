@@ -65,6 +65,12 @@ func TestGetStar(t *testing.T) {
 	if val != h {
 		t.Errorf("expected 'static', got %v", val)
 	}
+
+	key = "/static/favicon.ico"
+	val = trie.Get(key)
+	if val != h {
+		t.Errorf("expected 'static', got %v", val)
+	}
 }
 
 func TestGetWithParams(t *testing.T) {
