@@ -1,6 +1,13 @@
 # ServeMux
 
-`ServeMux` is an efficient, api-compatible extension of `http.ServeMux`.
+`ServeMux` is an efficient, API-compatible extension of `http.ServeMux`.
+
+## Features
+
+* Uses a specialized [trie](https://en.wikipedia.org/wiki/Trie) data-structure for efficiency.
+* Parameterized pattern matching (:segment, *)
+* Simple, drop-in replacement for `http.ServeMux`
+* No external dependencies
 
 ## Example
 
@@ -40,6 +47,6 @@ Use [bombardier](https://github.com/codesenberg/bombardier) to benchmark the per
 
 ## License
 
-MIT, see `LICENSE` file for details.
+MIT, see [LICENSE](./LICENSE) file for details.
 
 Copyright 2019 George Moschovitis.
