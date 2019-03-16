@@ -79,9 +79,13 @@ func TestGetMatchAll(t *testing.T) {
 	}
 
 	key = "/static/favicon.ico"
-	val, _ = trie.Get(key)
+	val, args = trie.Get(key)
 	if val != h {
 		t.Errorf("expected 'static', got %v", val)
+	}
+	av = args["*"]
+	if av != "favicon.ico" {
+		t.Errorf("expected 'favicon.ico', got %v", av)
 	}
 }
 

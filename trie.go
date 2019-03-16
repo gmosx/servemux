@@ -28,13 +28,11 @@ func (t *Trie) Put(key string, val TrieValue) bool {
 	node := t
 
 	for segment, i := sliceSegmentAt(key, 0); ; segment, i = sliceSegmentAt(key, i) {
-		if len(segment) != 0 { // TODO: remove this test?
-			// Check if the segment is a parameter.
+		if len(segment) != 0 {
 			if segment[0] == '*' {
 				node.param = segment
-				break
+				i = -1
 			}
-
 			if segment[0] == ':' {
 				node.param = segment
 			}
@@ -66,6 +64,7 @@ func (t *Trie) Get(key string) (TrieValue, map[string]string) {
 	node := t
 	for segment, i := sliceSegmentAt(key, 0); ; segment, i = sliceSegmentAt(key, i) {
 		child := selectChild(node, segment)
+
 		if child == nil {
 			return nil, args
 		}
@@ -74,20 +73,21 @@ func (t *Trie) Get(key string) (TrieValue, map[string]string) {
 			if args == nil {
 				args = map[string]string{}
 			}
+			if node.param[0] == '*' {
+				// Pass the sub-path as the special '*' argument.
+				if i == -1 {
+					args["*"] = key[(len(key) - len(segment)):]
+				} else {
+					args["*"] = key[(i - len(segment)):]
+					i = -1
+				}
+			}
 			if node.param[0] == ':' {
 				args[node.param[1:]] = segment
 			}
 		}
 
 		node = child
-
-		if node.param == "*" {
-			if args == nil {
-				args = map[string]string{}
-			}
-			args["*"] = key[i+1:]
-			break
-		}
 
 		if i == -1 {
 			break
