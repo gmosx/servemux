@@ -74,7 +74,8 @@ func (t *Trie) Get(key string) Value {
 	return node.value
 }
 
-// GetWithParams returns the value associated with the given key.
+// GetWithParams returns the value associated with the given key and optionally
+// a map of matched parameters.
 func (t *Trie) GetWithParams(key string) (Value, map[string]string) {
 	var params map[string]string
 	node := t

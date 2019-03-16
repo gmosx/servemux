@@ -2,6 +2,7 @@ package servemux
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"sync"
 )
@@ -10,7 +11,13 @@ type key struct{}
 
 var paramsKey key
 
-// ServeMux to be defined
+// ServeMux is an HTTP request multiplexer. It matches the URL of each incoming
+// request against a list of registered patterns and calls the handler for the
+// pattern that most closely matches the URL.
+//
+// ServeMux is a minimal extension of http.ServeMux found in the standard
+// library. It offers improved performance and more powerful pattern-marching
+// (e.g. parameters and match-all options).
 type ServeMux struct {
 	mu              sync.RWMutex
 	trie            *Trie
@@ -25,14 +32,18 @@ func New() *ServeMux {
 	}
 }
 
-// Handle to be defined
+// Handle registers the handler for the given pattern. If a handler already
+// exists for pattern, Handle panics.
 func (m *ServeMux) Handle(pattern string, handler http.Handler) {
 	m.mu.Lock()
-	m.trie.Put(pattern, handler)
+	newval := m.trie.Put(pattern, handler)
+	if !newval {
+		panic(fmt.Sprintf("Duplicate handler for pattern '%s'", pattern))
+	}
 	m.mu.Unlock()
 }
 
-// HandleFunc to be defined
+// HandleFunc registers the handler function for the given pattern.
 func (m *ServeMux) HandleFunc(pattern string, handler func(http.ResponseWriter, *http.Request)) {
 	if handler == nil {
 		panic("http: nil handler")
