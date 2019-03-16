@@ -1,13 +1,14 @@
 # ServeMux
 
-`ServeMux` is an efficient, API-compatible extension of `http.ServeMux`.
+`ServeMux` is an efficient, more flexible, yet API-compatible extension of `http.ServeMux`.
 
 ## Features
 
-* Uses a specialized [trie](https://en.wikipedia.org/wiki/Trie) data-structure for efficiency.
+* Uses a specialized [trie](https://en.wikipedia.org/wiki/Trie) data-structure for efficiency
 * Parameterized pattern matching (:segment, *)
 * Simple, drop-in replacement for `http.ServeMux`
 * No external dependencies
+* No extraneous features
 
 ## Example
 
