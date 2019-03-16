@@ -53,7 +53,7 @@ func TestGet(t *testing.T) {
 	}
 }
 
-func TestGetStar(t *testing.T) {
+func TestGetMatchAll(t *testing.T) {
 	trie := NewTrie()
 
 	key := "/static/*"
@@ -61,9 +61,13 @@ func TestGetStar(t *testing.T) {
 	_ = trie.Put(key, h)
 
 	key = "/static/img/logo.svg"
-	val, _ := trie.Get(key)
+	val, params := trie.Get(key)
 	if val != h {
 		t.Errorf("expected 'static', got %v", val)
+	}
+	pv := params["*"]
+	if pv != "img/logo.svg" {
+		t.Errorf("expected 'img/logo.svg', got %v", pv)
 	}
 
 	key = "/static/favicon.ico"

@@ -44,6 +44,7 @@ func (t *Trie) Put(key string, val Value) bool {
 			child = NewTrie()
 			node.children[segment] = child
 		}
+
 		node = child
 		if i == -1 {
 			break
@@ -61,23 +62,30 @@ func (t *Trie) Get(key string) (Value, map[string]string) {
 	var params map[string]string
 	node := t
 	for segment, i := sliceSegmentAt(key, 0); ; segment, i = sliceSegmentAt(key, i) {
-		n := selectChild(node, segment)
-		if n == nil {
+		child := selectChild(node, segment)
+		if child == nil {
 			return nil, params
 		}
+
 		if node.pattern != "" {
 			if params == nil {
-				params = map[string]string{
-					node.pattern[1:]: segment,
-				}
-			} else {
+				params = map[string]string{}
+			}
+			if node.pattern[0] == ':' {
 				params[node.pattern[1:]] = segment
 			}
 		}
-		node = n
+
+		node = child
+
 		if node.pattern == "*" {
+			if params == nil {
+				params = map[string]string{}
+			}
+			params["*"] = key[i+1:]
 			break
 		}
+
 		if i == -1 {
 			break
 		}
