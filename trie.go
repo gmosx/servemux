@@ -8,7 +8,7 @@ import (
 // TrieValue represents a trie value.
 type TrieValue = http.Handler
 
-// Trie is a prefix search tree, specialized to work with the ServeMux.
+// Trie is a prefix search tree, specialized to work with ServeMux.
 type Trie struct {
 	value    TrieValue
 	param    string

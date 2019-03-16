@@ -41,3 +41,5 @@ Use [bombardier](https://github.com/codesenberg/bombardier) to benchmark the per
 ## License
 
 MIT, see `LICENSE` file for details.
+
+Copyright 2019 George Moschovitis.
