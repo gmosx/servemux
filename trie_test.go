@@ -61,13 +61,13 @@ func TestGetMatchAll(t *testing.T) {
 	_ = trie.Put(key, h)
 
 	key = "/static/img/logo.svg"
-	val, params := trie.Get(key)
+	val, args := trie.Get(key)
 	if val != h {
 		t.Errorf("expected 'static', got %v", val)
 	}
-	pv := params["*"]
-	if pv != "img/logo.svg" {
-		t.Errorf("expected 'img/logo.svg', got %v", pv)
+	av := args["*"]
+	if av != "img/logo.svg" {
+		t.Errorf("expected 'img/logo.svg', got %v", av)
 	}
 
 	key = "/static/favicon.ico"
@@ -85,11 +85,11 @@ func TestGetWithParams(t *testing.T) {
 	key := "/accounts/:id/comments"
 	_ = trie.Put(key, ch)
 
-	val, params := trie.Get("/accounts/123/comments")
+	val, args := trie.Get("/accounts/123/comments")
 	if val != ch {
 		t.Errorf("expected 'comments', got %s", val)
 	}
-	id, found := params["id"]
+	id, found := args["id"]
 	if !found {
 		t.Error("'id' parameter not found")
 	}
@@ -102,18 +102,18 @@ func TestGetWithParams(t *testing.T) {
 	key = "/accounts/:id/posts/:filter"
 	_ = trie.Put(key, ph)
 
-	val, params = trie.Get("/accounts/314/posts/date")
+	val, args = trie.Get("/accounts/314/posts/date")
 	if val != ph {
 		t.Errorf("expected 'posts', got %s", val)
 	}
-	id, found = params["id"]
+	id, found = args["id"]
 	if !found {
 		t.Error("'id' parameter not found")
 	}
 	if id != "314" {
 		t.Errorf("expected id=314, got %s", id)
 	}
-	filter, found := params["filter"]
+	filter, found := args["filter"]
 	if !found {
 		t.Error("'filter' parameter not found")
 	}

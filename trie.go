@@ -11,7 +11,7 @@ type Value = http.Handler
 // Trie is a prefix search tree, specialized to work with the ServeMux.
 type Trie struct {
 	value    Value
-	pattern  string
+	param    string
 	children map[string]*Trie // TODO: strange to use map within a trie :-|
 }
 
@@ -28,14 +28,14 @@ func (t *Trie) Put(key string, val Value) bool {
 	node := t
 	for segment, i := sliceSegmentAt(key, 0); ; segment, i = sliceSegmentAt(key, i) {
 		if len(segment) != 0 { // TODO: remove this test?
-			// Check if the segment is a parameter or a match-all pattern.
+			// Check if the segment is a parameter.
 			if segment[0] == '*' {
-				node.pattern = segment
+				node.param = segment
 				break
 			}
 
 			if segment[0] == ':' {
-				node.pattern = segment
+				node.param = segment
 			}
 		}
 
@@ -57,32 +57,33 @@ func (t *Trie) Put(key string, val Value) bool {
 }
 
 // Get returns the value associated with the given key and optionally
-// a map of matched parameters.
+// a map of arguments.
 func (t *Trie) Get(key string) (Value, map[string]string) {
-	var params map[string]string
+	var args map[string]string
+
 	node := t
 	for segment, i := sliceSegmentAt(key, 0); ; segment, i = sliceSegmentAt(key, i) {
 		child := selectChild(node, segment)
 		if child == nil {
-			return nil, params
+			return nil, args
 		}
 
-		if node.pattern != "" {
-			if params == nil {
-				params = map[string]string{}
+		if node.param != "" {
+			if args == nil {
+				args = map[string]string{}
 			}
-			if node.pattern[0] == ':' {
-				params[node.pattern[1:]] = segment
+			if node.param[0] == ':' {
+				args[node.param[1:]] = segment
 			}
 		}
 
 		node = child
 
-		if node.pattern == "*" {
-			if params == nil {
-				params = map[string]string{}
+		if node.param == "*" {
+			if args == nil {
+				args = map[string]string{}
 			}
-			params["*"] = key[i+1:]
+			args["*"] = key[i+1:]
 			break
 		}
 
@@ -91,7 +92,7 @@ func (t *Trie) Get(key string) (Value, map[string]string) {
 		}
 	}
 
-	return node.value, params
+	return node.value, args
 }
 
 // slice returns the path segment that begins at start and the index
@@ -116,8 +117,8 @@ func selectChild(node *Trie, key string) *Trie {
 		return c
 	}
 
-	if node.pattern != "" {
-		return node.children[node.pattern]
+	if node.param != "" {
+		return node.children[node.param]
 	}
 
 	return nil
