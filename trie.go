@@ -27,7 +27,7 @@ func NewTrie() *Trie {
 func (t *Trie) Put(key string, val TrieValue) bool {
 	node := t
 
-	for segment, i := sliceSegmentAt(key, 0); ; segment, i = sliceSegmentAt(key, i) {
+	for segment, i := sliceSegmentAt(key, 1); ; segment, i = sliceSegmentAt(key, i) {
 		if len(segment) != 0 {
 			if segment[0] == '*' {
 				node.param = segment
@@ -62,7 +62,7 @@ func (t *Trie) Get(key string) (TrieValue, map[string]string) {
 	var args map[string]string
 
 	node := t
-	prev := 0
+	prev := 1
 	for segment, i := sliceSegmentAt(key, prev); ; segment, i = sliceSegmentAt(key, i) {
 		child := selectChild(node, segment)
 
@@ -75,7 +75,7 @@ func (t *Trie) Get(key string) (TrieValue, map[string]string) {
 				args = map[string]string{}
 			}
 			if node.param[0] == '*' {
-				args["*"] = key[prev+1:]
+				args["*"] = key[prev:]
 				i = -1
 			}
 			if node.param[0] == ':' {
@@ -102,12 +102,12 @@ func sliceSegmentAt(path string, start int) (segment string, next int) {
 		return "", -1
 	}
 
-	end := strings.IndexRune(path[start+1:], '/')
+	end := strings.IndexRune(path[start:], '/')
 	if end == -1 {
-		return path[start+1:], -1
+		return path[start:], -1
 	}
 
-	return path[start+1 : start+end+1], start + end + 1
+	return path[start : start+end], start + end + 1
 }
 
 func selectChild(node *Trie, key string) *Trie {
