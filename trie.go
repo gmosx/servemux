@@ -5,12 +5,12 @@ import (
 	"strings"
 )
 
-// Value represents a trie value.
-type Value = http.Handler
+// TrieValue represents a trie value.
+type TrieValue = http.Handler
 
 // Trie is a prefix search tree, specialized to work with the ServeMux.
 type Trie struct {
-	value    Value
+	value    TrieValue
 	param    string
 	children map[string]*Trie // TODO: strange to use map within a trie :-|
 }
@@ -24,7 +24,7 @@ func NewTrie() *Trie {
 
 // Put inserts a new value into the tree. Returns true if it inserts a new value,
 // false if it replaces an existing value.
-func (t *Trie) Put(key string, val Value) bool {
+func (t *Trie) Put(key string, val TrieValue) bool {
 	node := t
 	for segment, i := sliceSegmentAt(key, 0); ; segment, i = sliceSegmentAt(key, i) {
 		if len(segment) != 0 { // TODO: remove this test?
@@ -58,7 +58,7 @@ func (t *Trie) Put(key string, val Value) bool {
 
 // Get returns the value associated with the given key and optionally
 // a map of arguments.
-func (t *Trie) Get(key string) (Value, map[string]string) {
+func (t *Trie) Get(key string) (TrieValue, map[string]string) {
 	var args map[string]string
 
 	node := t

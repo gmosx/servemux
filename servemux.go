@@ -9,15 +9,14 @@ import (
 
 type key struct{}
 
-var paramsKey key
+var argsKey key
 
 // ServeMux is an HTTP request multiplexer. It matches the URL of each incoming
 // request against a list of registered patterns and calls the handler for the
 // pattern that most closely matches the URL.
 //
 // ServeMux is a minimal extension of http.ServeMux found in the standard
-// library. It offers improved performance and more powerful pattern-marching
-// (e.g. parameters and match-all options).
+// library. It offers improved performance and parameterized pattern-marching.
 type ServeMux struct {
 	mu              sync.RWMutex
 	trie            *Trie
@@ -54,15 +53,15 @@ func (m *ServeMux) HandleFunc(pattern string, handler func(http.ResponseWriter, 
 
 func (m *ServeMux) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	p := r.URL.Path
-	h, params := m.trie.Get(p)
+	h, args := m.trie.Get(p)
 
 	if h == nil {
 		m.NotFoundHandler.ServeHTTP(w, r)
 		return
 	}
 
-	if params != nil {
-		ctx := context.WithValue(r.Context(), paramsKey, params)
+	if args != nil {
+		ctx := context.WithValue(r.Context(), argsKey, args)
 		h.ServeHTTP(w, r.WithContext(ctx))
 		return
 	}
@@ -70,14 +69,14 @@ func (m *ServeMux) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	h.ServeHTTP(w, r)
 }
 
-// ParamValue returns the value associated with key.
-func ParamValue(r *http.Request, key string) string {
-	params := r.Context().Value(paramsKey)
-	if params == nil {
+// Value returns the value associated with key.
+func Value(r *http.Request, key string) string {
+	args := r.Context().Value(argsKey)
+	if args == nil {
 		return ""
 	}
 
-	v, found := params.(map[string]string)[key]
+	v, found := args.(map[string]string)[key]
 	if !found {
 		return ""
 	}

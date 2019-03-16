@@ -8,7 +8,7 @@
 import "go.reizu.org/pkg/servemux"
 
 func postsHandler(w http.ResponseWriter, r *http.Request) {
-    id := servemux.ParamValue(r, "id")
+    id := servemux.Value(r, "id")
     fmt.Fprintf(w, id)
 }
 

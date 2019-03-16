@@ -8,7 +8,7 @@ import (
 )
 
 func paramDumpHandler(w http.ResponseWriter, r *http.Request) {
-	id := ParamValue(r, "id")
+	id := Value(r, "id")
 	fmt.Fprintf(w, id)
 }
 

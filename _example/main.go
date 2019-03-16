@@ -25,7 +25,7 @@ func main() {
 			return
 		}
 
-		w.Write([]byte(servemux.ParamValue(r, "id")))
+		w.Write([]byte(servemux.Value(r, "id")))
 	})
 
 	log.Fatal(http.ListenAndServe(":3000", mux))
