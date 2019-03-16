@@ -55,28 +55,9 @@ func (t *Trie) Put(key string, val Value) bool {
 	return isNewVal
 }
 
-// Get returns the value associated with the given key.
-func (t *Trie) Get(key string) Value {
-	node := t
-	for segment, i := sliceSegmentAt(key, 0); ; segment, i = sliceSegmentAt(key, i) {
-		node, _ = selectChild(node, segment)
-		if node == nil {
-			return nil
-		}
-		if node.pattern == "*" {
-			break
-		}
-		if i == -1 {
-			break
-		}
-	}
-
-	return node.value
-}
-
-// GetWithParams returns the value associated with the given key and optionally
+// Get returns the value associated with the given key and optionally
 // a map of matched parameters.
-func (t *Trie) GetWithParams(key string) (Value, map[string]string) {
+func (t *Trie) Get(key string) (Value, map[string]string) {
 	var params map[string]string
 	node := t
 	for segment, i := sliceSegmentAt(key, 0); ; segment, i = sliceSegmentAt(key, i) {

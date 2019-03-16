@@ -56,7 +56,7 @@ func (m *ServeMux) HandleFunc(pattern string, handler func(http.ResponseWriter, 
 // r.Host, and r.URL.Path. It always returns a non-nil handler.
 func (m *ServeMux) Handler(r *http.Request) (handler http.Handler, pattern string) {
 	p := r.URL.Path
-	h := m.trie.Get(p)
+	h, _ := m.trie.Get(p)
 
 	// TODO: return matched pattern string.
 
@@ -69,7 +69,7 @@ func (m *ServeMux) Handler(r *http.Request) (handler http.Handler, pattern strin
 
 func (m *ServeMux) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	p := r.URL.Path
-	h, params := m.trie.GetWithParams(p)
+	h, params := m.trie.Get(p)
 
 	if h == nil {
 		m.NotFoundHandler.ServeHTTP(w, r)
