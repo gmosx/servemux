@@ -7,7 +7,6 @@ import (
 	"testing"
 )
 
-
 func paramDumpHandler(w http.ResponseWriter, r *http.Request) {
 	id := ParamValue(r, "id")
 	fmt.Fprintf(w, id)

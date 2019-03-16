@@ -25,7 +25,6 @@ func NewTrie() *Trie {
 // Put inserts a new value into the tree.
 func (t *Trie) Put(key string, val Value) bool {
 	node := t
-
 	for part, i := splitter(key, 0); ; part, i = splitter(key, i) {
 		if isParam(part) {
 			node.param = part
