@@ -61,11 +61,11 @@ func (t *Trie) Get(key string) (Value, map[string]string) {
 	var params map[string]string
 	node := t
 	for segment, i := sliceSegmentAt(key, 0); ; segment, i = sliceSegmentAt(key, i) {
-		n, isParamMatch := selectChild(node, segment)
+		n := selectChild(node, segment)
 		if n == nil {
 			return nil, params
 		}
-		if isParamMatch {
+		if node.pattern != "" {
 			if params == nil {
 				params = map[string]string{
 					node.pattern[1:]: segment,
@@ -101,17 +101,16 @@ func sliceSegmentAt(path string, start int) (segment string, next int) {
 	return path[start+1 : start+end+1], start + end + 1
 }
 
-// selectChild selects the next child for inspection. A second boolean return-value
-// is true if a pattern is used for selection.
-func selectChild(node *Trie, key string) (*Trie, bool) {
+// selectChild selects the next child for inspection.
+func selectChild(node *Trie, key string) *Trie {
 	c, found := node.children[key]
 	if found {
-		return c, false
+		return c
 	}
 
 	if node.pattern != "" {
-		return node.children[node.pattern], true
+		return node.children[node.pattern]
 	}
 
-	return nil, false
+	return nil
 }
