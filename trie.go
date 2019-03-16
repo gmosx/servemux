@@ -26,8 +26,15 @@ func NewTrie() *Trie {
 func (t *Trie) Put(key string, val Value) bool {
 	node := t
 	for part, i := splitter(key, 0); ; part, i = splitter(key, i) {
-		if isParam(part) {
-			node.param = part
+		if len(part) != 0 { // TODO: remove this test?
+			if part[0] == '*' {
+				node.param = part
+				break
+			}
+
+			if part[0] == ':' {
+				node.param = part
+			}
 		}
 
 		child, _ := node.children[part]
@@ -53,6 +60,9 @@ func (t *Trie) Get(key string) Value {
 		node, _ = selectChild(node, part)
 		if node == nil {
 			return nil
+		}
+		if node.param == "*" {
+			break
 		}
 		if i == -1 {
 			break
@@ -81,6 +91,9 @@ func (t *Trie) GetWithParams(key string) (Value, map[string]string) {
 			}
 		}
 		node = n
+		if node.param == "*" {
+			break
+		}
 		if i == -1 {
 			break
 		}
@@ -121,5 +134,5 @@ func isParam(key string) bool {
 	if len(key) == 0 {
 		return false
 	}
-	return key[0] == ':'
+	return key[0] == ':' || key[0] == '*'
 }

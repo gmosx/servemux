@@ -53,6 +53,20 @@ func TestGet(t *testing.T) {
 	}
 }
 
+func TestGetStar(t *testing.T) {
+	trie := NewTrie()
+
+	key := "/static/*"
+	h := testHandler{name: "static"}
+	_ = trie.Put(key, h)
+
+	key = "/static/img/logo.svg"
+	val := trie.Get(key)
+	if val != h {
+		t.Errorf("expected 'static', got %v", val)
+	}
+}
+
 func TestGetWithParams(t *testing.T) {
 	trie := NewTrie()
 
