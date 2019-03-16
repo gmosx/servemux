@@ -5,15 +5,16 @@
 ## Example
 
 ```go
-import "github.com/gmosx/go-servemux"
+import "go.reizu.org/pkg/servemux"
 
 func postsHandler(w http.ResponseWriter, r *http.Request) {
-    id := ParamValue(r, "id")
+    id := servemux.ParamValue(r, "id")
     fmt.Fprintf(w, id)
 }
 
 mux := servemux.New()
 mux.HandleFunc("/accounts/:id/posts", postsHandler)
+mux.Handle("/static/*", http.StripPrefix("/static/", http.FileServer(http.Dir("./static"))))
 
 log.Fatal(http.ListenAndServe(":8080", mux))
 ```
