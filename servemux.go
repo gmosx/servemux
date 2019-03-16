@@ -52,21 +52,6 @@ func (m *ServeMux) HandleFunc(pattern string, handler func(http.ResponseWriter, 
 	m.Handle(pattern, http.HandlerFunc(handler))
 }
 
-// Handler returns the handler to use for the given request, consulting r.Method,
-// r.Host, and r.URL.Path. It always returns a non-nil handler.
-func (m *ServeMux) Handler(r *http.Request) (handler http.Handler, pattern string) {
-	p := r.URL.Path
-	h, _ := m.trie.Get(p)
-
-	// TODO: return matched pattern string.
-
-	if h == nil {
-		return m.NotFoundHandler, ""
-	}
-
-	return h, ""
-}
-
 func (m *ServeMux) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	p := r.URL.Path
 	h, params := m.trie.Get(p)
