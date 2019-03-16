@@ -1,6 +1,6 @@
 # ServeMux
 
-`ServeMux` is a drop-in replacement of the http.ServeMux in the standard library. It offers additional functionality while staying API compatible.
+`ServeMux` is an efficient, api-compatible extension of `http.ServeMux`.
 
 ## Example
 
