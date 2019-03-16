@@ -51,9 +51,9 @@ func (t *Trie) Put(key string, val TrieValue) bool {
 		}
 	}
 
-	isNewVal := node.value == nil
+	newval := node.value == nil
 	node.value = val
-	return isNewVal
+	return newval
 }
 
 // Get returns the value associated with the given key and optionally
@@ -62,7 +62,8 @@ func (t *Trie) Get(key string) (TrieValue, map[string]string) {
 	var args map[string]string
 
 	node := t
-	for segment, i := sliceSegmentAt(key, 0); ; segment, i = sliceSegmentAt(key, i) {
+	prev := 0
+	for segment, i := sliceSegmentAt(key, prev); ; segment, i = sliceSegmentAt(key, i) {
 		child := selectChild(node, segment)
 
 		if child == nil {
@@ -74,13 +75,8 @@ func (t *Trie) Get(key string) (TrieValue, map[string]string) {
 				args = map[string]string{}
 			}
 			if node.param[0] == '*' {
-				// Pass the sub-path as the special '*' argument.
-				if i == -1 {
-					args["*"] = key[(len(key) - len(segment)):]
-				} else {
-					args["*"] = key[(i - len(segment)):]
-					i = -1
-				}
+				args["*"] = key[prev+1:]
+				i = -1
 			}
 			if node.param[0] == ':' {
 				args[node.param[1:]] = segment
@@ -92,6 +88,8 @@ func (t *Trie) Get(key string) (TrieValue, map[string]string) {
 		if i == -1 {
 			break
 		}
+
+		prev = i
 	}
 
 	return node.value, args
