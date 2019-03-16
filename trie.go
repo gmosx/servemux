@@ -8,10 +8,10 @@ import (
 // Value represents a trie value.
 type Value = http.Handler
 
-// Trie is a prefix search tree.
+// Trie is a prefix search tree, specialized to work with the ServeMux.
 type Trie struct {
 	value    Value
-	param    string
+	special  string
 	children map[string]*Trie // TODO: strange to use map within a trie :-|
 }
 
@@ -28,13 +28,15 @@ func (t *Trie) Put(key string, val Value) bool {
 	node := t
 	for part, i := splitter(key, 0); ; part, i = splitter(key, i) {
 		if len(part) != 0 { // TODO: remove this test?
+			// Check if the part is 'special' e.g. a parameter or a match-all
+			// pattern.
 			if part[0] == '*' {
-				node.param = part
+				node.special = part
 				break
 			}
 
 			if part[0] == ':' {
-				node.param = part
+				node.special = part
 			}
 		}
 
@@ -62,7 +64,7 @@ func (t *Trie) Get(key string) Value {
 		if node == nil {
 			return nil
 		}
-		if node.param == "*" {
+		if node.special == "*" {
 			break
 		}
 		if i == -1 {
@@ -85,14 +87,14 @@ func (t *Trie) GetWithParams(key string) (Value, map[string]string) {
 		if isParamMatch {
 			if params == nil {
 				params = map[string]string{
-					node.param[1:]: part,
+					node.special[1:]: part,
 				}
 			} else {
-				params[node.param[1:]] = part
+				params[node.special[1:]] = part
 			}
 		}
 		node = n
-		if node.param == "*" {
+		if node.special == "*" {
 			break
 		}
 		if i == -1 {
@@ -122,8 +124,8 @@ func selectChild(node *Trie, key string) (*Trie, bool) {
 		return c, false
 	}
 
-	if node.param != "" {
-		return node.children[node.param], true
+	if node.special != "" {
+		return node.children[node.special], true
 	}
 
 	return nil, false
