@@ -11,7 +11,7 @@ type Value = http.Handler
 // Trie is a prefix search tree, specialized to work with the ServeMux.
 type Trie struct {
 	value    Value
-	special  string
+	pattern  string
 	children map[string]*Trie // TODO: strange to use map within a trie :-|
 }
 
@@ -26,24 +26,23 @@ func NewTrie() *Trie {
 // false if it replaces an existing value.
 func (t *Trie) Put(key string, val Value) bool {
 	node := t
-	for part, i := splitter(key, 0); ; part, i = splitter(key, i) {
-		if len(part) != 0 { // TODO: remove this test?
-			// Check if the part is 'special' e.g. a parameter or a match-all
-			// pattern.
-			if part[0] == '*' {
-				node.special = part
+	for segment, i := sliceSegmentAt(key, 0); ; segment, i = sliceSegmentAt(key, i) {
+		if len(segment) != 0 { // TODO: remove this test?
+			// Check if the segment is a parameter or a match-all pattern.
+			if segment[0] == '*' {
+				node.pattern = segment
 				break
 			}
 
-			if part[0] == ':' {
-				node.special = part
+			if segment[0] == ':' {
+				node.pattern = segment
 			}
 		}
 
-		child, _ := node.children[part]
+		child, _ := node.children[segment]
 		if child == nil {
 			child = NewTrie()
-			node.children[part] = child
+			node.children[segment] = child
 		}
 		node = child
 		if i == -1 {
@@ -59,12 +58,12 @@ func (t *Trie) Put(key string, val Value) bool {
 // Get returns the value associated with the given key.
 func (t *Trie) Get(key string) Value {
 	node := t
-	for part, i := splitter(key, 0); ; part, i = splitter(key, i) {
-		node, _ = selectChild(node, part)
+	for segment, i := sliceSegmentAt(key, 0); ; segment, i = sliceSegmentAt(key, i) {
+		node, _ = selectChild(node, segment)
 		if node == nil {
 			return nil
 		}
-		if node.special == "*" {
+		if node.pattern == "*" {
 			break
 		}
 		if i == -1 {
@@ -79,22 +78,22 @@ func (t *Trie) Get(key string) Value {
 func (t *Trie) GetWithParams(key string) (Value, map[string]string) {
 	var params map[string]string
 	node := t
-	for part, i := splitter(key, 0); ; part, i = splitter(key, i) {
-		n, isParamMatch := selectChild(node, part)
+	for segment, i := sliceSegmentAt(key, 0); ; segment, i = sliceSegmentAt(key, i) {
+		n, isParamMatch := selectChild(node, segment)
 		if n == nil {
 			return nil, params
 		}
 		if isParamMatch {
 			if params == nil {
 				params = map[string]string{
-					node.special[1:]: part,
+					node.pattern[1:]: segment,
 				}
 			} else {
-				params[node.special[1:]] = part
+				params[node.pattern[1:]] = segment
 			}
 		}
 		node = n
-		if node.special == "*" {
+		if node.pattern == "*" {
 			break
 		}
 		if i == -1 {
@@ -105,7 +104,9 @@ func (t *Trie) GetWithParams(key string) (Value, map[string]string) {
 	return node.value, params
 }
 
-func splitter(path string, start int) (segment string, next int) {
+// slice returns the path segment that begins at start and the index
+// for the next segment (or -1 if the end is reached).
+func sliceSegmentAt(path string, start int) (segment string, next int) {
 	if /* len(path) == 0 || start < 0 || */ start > len(path)-1 {
 		return "", -1
 	}
@@ -118,14 +119,16 @@ func splitter(path string, start int) (segment string, next int) {
 	return path[start+1 : start+end+1], start + end + 1
 }
 
+// selectChild selects the next child for inspection. A second boolean return-value
+// is true if a pattern is used for selection.
 func selectChild(node *Trie, key string) (*Trie, bool) {
 	c, found := node.children[key]
 	if found {
 		return c, false
 	}
 
-	if node.special != "" {
-		return node.children[node.special], true
+	if node.pattern != "" {
+		return node.children[node.pattern], true
 	}
 
 	return nil, false
