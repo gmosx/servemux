@@ -12,7 +12,7 @@ type TrieValue = http.Handler
 type Trie struct {
 	value    TrieValue
 	param    string
-	children map[string]*Trie // TODO: strange to use map within a trie :-|
+	children map[string]*Trie
 }
 
 // NewTrie allocates and returns a new *Trie.

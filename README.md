@@ -30,6 +30,7 @@ mux.HandleFunc("/accounts/:id/posts", postsHandler)
 // Example matches:
 // /static/img/logo.png
 // /static/favicon.ico
+// The matched sub-path can be accessed with: servemux.Value(r, "*")
 mux.Handle("/static/*", http.StripPrefix("/static/", http.FileServer(http.Dir("./static"))))
 
 log.Fatal(http.ListenAndServe(":8080", mux))
@@ -49,6 +50,12 @@ Use [bombardier](https://github.com/codesenberg/bombardier) to benchmark the per
 ./bombardier -c 125 -n 1000000 http://localhost:3000/
 ./bombardier -c 125 -n 1000000 http://localhost:3000/user/23
 ```
+
+## FAQ
+
+### Why doesn't ServeMux match for the request method?
+
+ServeMux routes URLs to handlers. In REST terms, it serves Web Resources at specific URLs. The request method is an orthogonal convern best handled within the handler itself. This way, the conceptual simplicity of Go (along with compatibility with the standard library) is retained and you can easily reuse code for different methods within the handler.
 
 ## Contact
 
