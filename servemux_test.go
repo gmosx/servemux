@@ -25,8 +25,9 @@ func TestServeHTTPWithParams(t *testing.T) {
 
 	mux.ServeHTTP(w, r)
 
-	s := w.Body.String()
-	if s != "123" {
-		t.Errorf("Expected 123, got %s", s)
+	want := "123"
+	got := w.Body.String()
+	if got != want {
+		t.Errorf("body = %q; want %q", got, want)
 	}
 }

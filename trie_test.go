@@ -33,31 +33,31 @@ func TestGet(t *testing.T) {
 	key := "/"
 	_ = trie.Put(key, ih)
 
-	val, _ := trie.Get(key)
-	if val != ih {
-		t.Errorf("expected index, got %s", val)
+	got, _ := trie.Get(key)
+	if got != ih {
+		t.Errorf("expected index, got %s", got)
 	}
 
 	key = "/a/deep/path"
 	dh := testHandler{name: "deep"}
 	_ = trie.Put(key, dh)
 
-	val, _ = trie.Get(key)
-	if val != dh {
-		t.Errorf("expected index, got %s", val)
+	got, _ = trie.Get(key)
+	if got != dh {
+		t.Errorf("expected index, got %s", got)
 	}
 
 	key = "/a/deep/path/"
 	_ = trie.Put(key, dh)
 
-	val, _ = trie.Get(key)
-	if val != dh {
-		t.Errorf("expected index, got %s", val)
+	got, _ = trie.Get(key)
+	if got != dh {
+		t.Errorf("expected index, got %s", got)
 	}
 
-	val, _ = trie.Get("/not/found")
-	if val != nil {
-		t.Errorf("expected no value, got %s", val)
+	got, _ = trie.Get("/not/found")
+	if got != nil {
+		t.Errorf("expected no value, got %s", got)
 	}
 }
 
@@ -69,9 +69,9 @@ func TestGetMatchAll(t *testing.T) {
 	_ = trie.Put(key, h)
 
 	key = "/static/img/logo.svg"
-	val, args := trie.Get(key)
-	if val != h {
-		t.Errorf("expected 'static', got %v", val)
+	got, args := trie.Get(key)
+	if got != h {
+		t.Errorf("expected 'static', got %v", got)
 	}
 	av := args["*"]
 	if av != "img/logo.svg" {
@@ -79,9 +79,9 @@ func TestGetMatchAll(t *testing.T) {
 	}
 
 	key = "/static/favicon.ico"
-	val, args = trie.Get(key)
-	if val != h {
-		t.Errorf("expected 'static', got %v", val)
+	got, args = trie.Get(key)
+	if got != h {
+		t.Errorf("expected 'static', got %v", got)
 	}
 	av = args["*"]
 	if av != "favicon.ico" {
@@ -97,9 +97,9 @@ func TestGetWithParams(t *testing.T) {
 	key := "/accounts/:id/comments"
 	_ = trie.Put(key, ch)
 
-	val, args := trie.Get("/accounts/123/comments")
-	if val != ch {
-		t.Errorf("expected 'comments', got %s", val)
+	got, args := trie.Get("/accounts/123/comments")
+	if got != ch {
+		t.Errorf("expected 'comments', got %s", got)
 	}
 	id, found := args["id"]
 	if !found {
@@ -114,9 +114,9 @@ func TestGetWithParams(t *testing.T) {
 	key = "/accounts/:id/posts/:filter"
 	_ = trie.Put(key, ph)
 
-	val, args = trie.Get("/accounts/314/posts/date")
-	if val != ph {
-		t.Errorf("expected 'posts', got %s", val)
+	got, args = trie.Get("/accounts/314/posts/date")
+	if got != ph {
+		t.Errorf("expected 'posts', got %s", got)
 	}
 	id, found = args["id"]
 	if !found {
@@ -138,8 +138,8 @@ func TestGetWithParams(t *testing.T) {
 	key = "/accounts/sign-in"
 	_ = trie.Put(key, sh)
 
-	val, _ = trie.Get("/accounts/sign-in")
-	if val != sh {
-		t.Errorf("expected 'sign-in', got %s", val)
+	got, _ = trie.Get("/accounts/sign-in")
+	if got != sh {
+		t.Errorf("expected 'sign-in', got %s", got)
 	}
 }
