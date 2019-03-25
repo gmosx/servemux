@@ -13,7 +13,7 @@
 ## Example
 
 ```go
-import "go.reizu.org/pkg/servemux"
+import "go.reizu.org/servemux"
 
 func postsHandler(w http.ResponseWriter, r *http.Request) {
     id := servemux.Value(r, "id")

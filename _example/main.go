@@ -4,7 +4,7 @@ import (
 	"log"
 	"net/http"
 
-	"go.reizu.org/pkg/servemux"
+	"go.reizu.org/servemux"
 )
 
 func main() {
