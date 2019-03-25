@@ -57,6 +57,10 @@ Use [bombardier](https://github.com/codesenberg/bombardier) to benchmark the per
 
 ServeMux routes URLs to handlers. In REST terms, it serves Web Resources at specific URLs. The request method is an orthogonal concern best handled within the handler itself. This way, the conceptual simplicity of Go (along with compatibility with the standard library) is retained and you can easily reuse code for different methods within the handler.
 
+## Contributing
+
+Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change. Please make sure to update tests as appropriate.
+
 ## Contact
 
 [@gmosx](https://twitter.com/gmosx) on Twitter.
