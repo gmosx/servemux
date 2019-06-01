@@ -37,10 +37,10 @@ mux.Handle("/static/*", http.StripPrefix("/static/", http.FileServer(http.Dir(".
 // Multiplex multiple handlers by the request method:
 mux.Handle("/post/:id", servemux.ByMethod(
     http.MethodGet, func(w http.ResponseWriter, r *http.Request) {
-        w.Write([]byte("GET!\n"))
+        w.Write([]byte("GET"))
     },
     http.MethodDelete, func(w http.ResponseWriter, r *http.Request) {
-        w.Write([]byte("DELETE!\n"))
+        w.Write([]byte("DELETE"))
     },
 ))
 
