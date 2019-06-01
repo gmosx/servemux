@@ -66,11 +66,11 @@ Use [bombardier](https://github.com/codesenberg/bombardier) to benchmark the per
 
 ### Why doesn't ServeMux match for the request method?
 
-ServeMux routes URLs to handlers. In REST terms, it serves Web Resources at specific URLs. The request method is an orthogonal concern best handled within the handler itself. This way, the conceptual simplicity of Go (along with compatibility with the standard library) is retained and you can easily reuse code for different methods within the handler.
+`ServeMux` routes URLs to handlers. In REST terms, it serves Web Resources at specific URLs. The request method is an orthogonal concern best handled within the handler itself. This way, the conceptual simplicity of Go (along with compatibility with the standard library) is retained and you can easily reuse code for different methods within the handler.
 
 ### That's reasonable, but I still want to multiplex by request method
 
-ServeMux provides a MethodMux handler to do just that. For convenience, you can use the `servemux.ByMethod` helper. Check out the included example for more details.
+We provide a `MethodMux` handler to do just that. For convenience, you can use the `servemux.ByMethod` helper. Check out the included example for more details.
 
 ## Contributing
 
