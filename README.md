@@ -36,12 +36,8 @@ mux.Handle("/static/*", http.StripPrefix("/static/", http.FileServer(http.Dir(".
 
 // Multiplex multiple handlers by the request method:
 mux.Handle("/post/:id", servemux.ByMethod(
-    http.MethodGet, func(w http.ResponseWriter, r *http.Request) {
-        w.Write([]byte("GET"))
-    },
-    http.MethodDelete, func(w http.ResponseWriter, r *http.Request) {
-        w.Write([]byte("DELETE"))
-    },
+    http.MethodGet, postsGetHandler,
+    http.MethodDelete, postsDeleteHandler,
 ))
 
 log.Fatal(http.ListenAndServe(":8080", mux))
