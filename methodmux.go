@@ -9,8 +9,8 @@ type MethodMux struct {
 	handlers map[string]http.Handler
 }
 
-// MuxMethods makes a MethodMux from a variadic arguments list.
-func MuxMethods(args ...interface{}) *MethodMux {
+// ByMethod makes a MethodMux from a variadic arguments list.
+func ByMethod(args ...interface{}) *MethodMux {
 	handlers := map[string]http.Handler {}
 
 	var meth string
