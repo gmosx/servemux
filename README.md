@@ -34,7 +34,7 @@ mux.HandleFunc("/accounts/:id/posts", postsHandler)
 // The matched sub-path can be accessed with: servemux.Value(r, "*")
 mux.Handle("/static/*", http.StripPrefix("/static/", http.FileServer(http.Dir("./static"))))
 
-// Multiplexing multiple handlers by the request method:
+// Multiplex multiple handlers by the request method:
 mux.Handle("/post/:id", servemux.ByMethod(
     http.MethodGet, func(w http.ResponseWriter, r *http.Request) {
         w.Write([]byte("GET!\n"))
