@@ -28,5 +28,14 @@ func main() {
 		w.Write([]byte(servemux.Value(r, "id")))
 	})
 
+	mux.Handle("/post/:id", servemux.NewMethodMux(map[string]http.Handler{
+		http.MethodGet: http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			w.Write([]byte("GET!\n"))
+		}),
+		http.MethodDelete: http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			w.Write([]byte("DELETE!\n"))
+		}),
+	}))
+
 	log.Fatal(http.ListenAndServe(":3000", mux))
 }

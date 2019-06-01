@@ -11,7 +11,7 @@ type MethodMux struct {
 
 // NewMethodMux returns a pointer to a new MethodMux.
 func NewMethodMux(handlers map[string]http.Handler) *MethodMux {
-	return &MethodMux{handlers: map[string]http.Handler{}}
+	return &MethodMux{handlers: handlers}
 }
 func (m *MethodMux) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	h, found := m.handlers[r.Method]
