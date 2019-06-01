@@ -6,7 +6,7 @@
 
 * Uses a specialized [trie](https://en.wikipedia.org/wiki/Trie) data-structure for efficiency
 * Parameterized pattern matching (:segment, *)
-* Orthogonal multiplexing by request method
+* Multiplexing by request method
 * Simple, drop-in replacement for `http.ServeMux`
 * No external dependencies
 * No extraneous features
@@ -66,7 +66,7 @@ Use [bombardier](https://github.com/codesenberg/bombardier) to benchmark the per
 
 ### That's reasonable, but I still want to multiplex by request method
 
-We provide a `MethodMux` handler to do just that. For convenience, you can use the `servemux.ByMethod` helper. Check out the included example for more details.
+We provide a separate `MethodMux` handler to do just that. For convenience, you can use the `servemux.ByMethod` helper. Check out the included example for more details.
 
 ## Contributing
 
