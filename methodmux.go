@@ -11,12 +11,12 @@ type MethodMux struct {
 
 // ByMethod makes a MethodMux from a variadic arguments list.
 func ByMethod(args ...interface{}) *MethodMux {
-	handlers := map[string]http.Handler {}
+	handlers := map[string]http.Handler{}
 
 	var meth string
 
 	for i, p := range args {
-		if i % 2 == 0 {
+		if i%2 == 0 {
 			m, ok := p.(string)
 			if !ok {
 				panic("invalid arguments to MuxMethods")
@@ -30,7 +30,7 @@ func ByMethod(args ...interface{}) *MethodMux {
 		case func(http.ResponseWriter, *http.Request):
 			handlers[meth] = http.HandlerFunc(h)
 		}
-	} 
+	}
 
 	return &MethodMux{handlers: handlers}
 }
