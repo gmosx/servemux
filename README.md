@@ -36,8 +36,8 @@ mux.Handle("/static/*", http.StripPrefix("/static/", http.FileServer(http.Dir(".
 
 // Multiplex multiple handlers by the request method:
 mux.Handle("/post/:id", servemux.ByMethod(
-    http.MethodGet, postsGetHandler,
-    http.MethodDelete, postsDeleteHandler,
+    http.MethodGet, getPostsHandler,
+    http.MethodDelete, deletePostsHandler,
 ))
 
 log.Fatal(http.ListenAndServe(":8080", mux))
