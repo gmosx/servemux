@@ -18,17 +18,31 @@
 ```go
 import "go.reizu.org/servemux"
 
-func postsHandler(w http.ResponseWriter, r *http.Request) {
+func postsFunc(w http.ResponseWriter, r *http.Request) {
     id := servemux.Value(r, "id")
-    fmt.Fprintf(w, id)
+    fmt.Fprintf(w, "%s", id)
 }
+
+func getPostsFunc(w http.ResponseWriter, r *http.Request) {
+    id := servemux.Value(r, "id")
+    fmt.Fprintf(w, "%s", id)
+}
+
+func deletetPostsFunc(w http.ResponseWriter, r *http.Request) {
+    id := servemux.Value(r, "id")
+    fmt.Fprintf(w, "delete %s", id)
+}
+
+getPostsHandler := http.HandlerFunc(getPostsFunc)
+
+deletePostsHandler := http.HandlerFunc(deletePostsFunc)
 
 mux := servemux.New()
 
 // Example matches:
 // /accounts/1/posts
 // /accounts/2/posts
-mux.HandleFunc("/accounts/:id/posts", postsHandler)
+mux.HandleFunc("/accounts/:id/posts", postsFunc)
 
 // Example matches:
 // /static/img/logo.png
@@ -38,13 +52,13 @@ mux.Handle("/static/*", http.StripPrefix("/static/", http.FileServer(http.Dir(".
 
 // Multiplex multiple handlers by the request method:
 mux.Handle("/post/:id", servemux.MethodHandlers{
-    http.MethodGet: getPostsHandler,
+    http.MethodGet:    getPostsHandler,
     http.MethodDelete: deletePostsHandler,
 })
 
 // Multiplex multiple handler functions by the request method:
 mux.Handle("/user/:id", servemux.MethodFuncs{
-    http.MethodGet: getUsersFunc,
+    http.MethodGet:    getUsersFunc,
     http.MethodDelete: deleteUsersFunc,
 })
 
