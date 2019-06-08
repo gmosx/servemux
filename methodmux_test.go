@@ -15,8 +15,8 @@ func TestMethodMuxAllow(t *testing.T) {
 		w.Write([]byte("DELETE"))
 	})
 
-	mux := MethodMux{
-		http.MethodGet: geth,
+	mux := MethodHandlers{
+		http.MethodGet:    geth,
 		http.MethodDelete: deleteh,
 	}
 
@@ -41,11 +41,11 @@ func TestMethodMuxAllow(t *testing.T) {
 }
 
 func TestMethodMuxReject(t *testing.T) {
-	geth := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	geth := func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("GET"))
-	})
+	}
 
-	mux := MethodMux{
+	mux := MethodFuncs{
 		http.MethodGet: geth,
 	}
 
@@ -58,7 +58,7 @@ func TestMethodMuxReject(t *testing.T) {
 
 	mux.ServeHTTP(w, r)
 
-	want := 404
+	want := http.StatusMethodNotAllowed
 	got := w.Code
 	if got != want {
 		t.Errorf("body = %d; want %d", got, want)

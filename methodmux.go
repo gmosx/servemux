@@ -2,34 +2,45 @@ package servemux
 
 import (
 	"net/http"
-	"strings"
 )
 
-// MethodMux multiplexes HTTP requests by HTTP method.
-type MethodMux map[string]http.Handler
+// MethodHandlers multiplexes HTTP requests by HTTP method.
+type MethodHandlers map[string]http.Handler
 
-func (m MethodMux) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+func (m MethodHandlers) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	h, found := m[r.Method]
 	if !found {
-		m.methodNotAllowed(w, r)
-		// http.NotFound(w, r)
+		w.WriteHeader(http.StatusMethodNotAllowed)
 		return
 	}
 
 	h.ServeHTTP(w, r)
 }
 
-func (m MethodMux) methodNotAllowed(w http.ResponseWriter, r *http.Request) {
-	if len(m) > 0 {
-		allowMethods := make([]string, len(m))
+// MethodFuncs multiplexes HTTP requests by HTTP method.
+type MethodFuncs map[string]func(http.ResponseWriter, *http.Request)
 
-		i := 0
-		for k := range m {
-			allowMethods[i] = k
-			i++
-		}
-
-		w.Header().Set("Allow", strings.Join(allowMethods, ", "))
+func (m MethodFuncs) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	h, found := m[r.Method]
+	if !found {
+		w.WriteHeader(http.StatusMethodNotAllowed)
+		return
 	}
-	w.WriteHeader(http.StatusMethodNotAllowed)
+
+	h(w, r)
 }
+
+// func (m MethodHandlers) methodNotAllowed(w http.ResponseWriter, r *http.Request) {
+// 	if len(m) > 0 {
+// 		allowMethods := make([]string, len(m))
+
+// 		i := 0
+// 		for k := range m {
+// 			allowMethods[i] = k
+// 			i++
+// 		}
+
+// 		w.Header().Set("Allow", strings.Join(allowMethods, ", "))
+// 	}
+// 	w.WriteHeader(http.StatusMethodNotAllowed)
+// }

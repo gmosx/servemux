@@ -36,9 +36,9 @@ func main() {
 		w.Write([]byte("DELETE!\n"))
 	}
 
-	mux.Handle("/post/:id", servemux.MethodMux{
-		http.MethodGet:    http.HandlerFunc(getFunc),
-		http.MethodDelete: http.HandlerFunc(deleteFunc),
+	mux.Handle("/post/:id", servemux.MethodFuncs{
+		http.MethodGet:    getFunc,
+		http.MethodDelete: deleteFunc,
 	})
 
 	log.Fatal(http.ListenAndServe(":3000", mux))
