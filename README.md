@@ -57,9 +57,9 @@ mux.Handle("/post/:id", servemux.MethodHandlers{
 })
 
 // Multiplex multiple handler functions by the request method:
-mux.Handle("/user/:id", servemux.MethodFuncs{
-    http.MethodGet:    getUsersFunc,
-    http.MethodDelete: deleteUsersFunc,
+mux.Handle("/post/:id", servemux.MethodFuncs{
+    http.MethodGet:    getPostsFunc,
+    http.MethodDelete: deletePostsFunc,
 })
 
 log.Fatal(http.ListenAndServe(":8080", mux))
