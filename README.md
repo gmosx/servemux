@@ -2,6 +2,8 @@
 
 `ServeMux` is an efficient, more flexible, yet API-compatible extension of `http.ServeMux`.
 
+[![GoDoc](https://godoc.org/go.reizu.org/servemux?status.svg)](https://godoc.org/go.reizu.org/servemux)
+
 ## Features
 
 * Uses a specialized [trie](https://en.wikipedia.org/wiki/Trie) data-structure for efficiency
