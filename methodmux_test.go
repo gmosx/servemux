@@ -7,18 +7,18 @@ import (
 )
 
 func TestMethodMuxAllow(t *testing.T) {
-	geth := func(w http.ResponseWriter, r *http.Request) {
+	geth := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("GET"))
-	}
+	})
 
-	deleteh := func(w http.ResponseWriter, r *http.Request) {
+	deleteh := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("DELETE"))
-	}
+	})
 
-	mux := ByMethod(
-		http.MethodGet, geth,
-		http.MethodDelete, deleteh,
-	)
+	mux := MethodMux{
+		http.MethodGet: geth,
+		http.MethodDelete: deleteh,
+	}
 
 	allow := []string{"GET", "DELETE"}
 
@@ -41,13 +41,13 @@ func TestMethodMuxAllow(t *testing.T) {
 }
 
 func TestMethodMuxReject(t *testing.T) {
-	geth := func(w http.ResponseWriter, r *http.Request) {
+	geth := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("GET"))
-	}
+	})
 
-	mux := ByMethod(
-		http.MethodGet, geth,
-	)
+	mux := MethodMux{
+		http.MethodGet: geth,
+	}
 
 	w := httptest.NewRecorder()
 

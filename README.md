@@ -35,10 +35,10 @@ mux.HandleFunc("/accounts/:id/posts", postsHandler)
 mux.Handle("/static/*", http.StripPrefix("/static/", http.FileServer(http.Dir("./static"))))
 
 // Multiplex multiple handlers by the request method:
-mux.Handle("/post/:id", servemux.ByMethod(
-    http.MethodGet, getPostsHandler,
-    http.MethodDelete, deletePostsHandler,
-))
+mux.Handle("/post/:id", servemux.MethodMux{
+    http.MethodGet: getPostsHandler,
+    http.MethodDelete: deletePostsHandler,
+})
 
 log.Fatal(http.ListenAndServe(":8080", mux))
 ```
@@ -66,7 +66,7 @@ Use [bombardier](https://github.com/codesenberg/bombardier) to benchmark the per
 
 ### That's reasonable, but I still want to multiplex by request method
 
-We provide a separate `MethodMux` handler to do just that. For convenience, you can use the `servemux.ByMethod` helper. Check out the included example for more details.
+We provide a separate `MethodMux` handler to do just that. Check out the included example for more details.
 
 ## Contributing
 
