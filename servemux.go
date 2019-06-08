@@ -1,3 +1,5 @@
+// Package servemux provides an efficient, more flexible, yet API-compatible 
+// extension of http.ServeMux.
 package servemux
 
 import (
