@@ -5,12 +5,10 @@ import (
 )
 
 // MethodMux multiplexes HTTP requests by HTTP method.
-type MethodMux struct {
-	handlers map[string]http.Handler
-}
+type MethodMux map[string]http.Handler
 
 // ByMethod makes a MethodMux from a variadic arguments list.
-func ByMethod(args ...interface{}) *MethodMux {
+func ByMethod(args ...interface{}) MethodMux {
 	handlers := map[string]http.Handler{}
 
 	var meth string
@@ -32,11 +30,11 @@ func ByMethod(args ...interface{}) *MethodMux {
 		}
 	}
 
-	return &MethodMux{handlers: handlers}
+	return MethodMux(handlers)
 }
 
-func (m *MethodMux) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	h, found := m.handlers[r.Method]
+func (m MethodMux) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	h, found := m[r.Method]
 	if !found {
 		// allowMethods := make([]string, len(m.handlers))
 		// i := 0
