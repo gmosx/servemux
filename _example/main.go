@@ -28,5 +28,18 @@ func main() {
 		w.Write([]byte(servemux.Value(r, "id")))
 	})
 
+	getFunc := func(w http.ResponseWriter, r *http.Request) {
+		w.Write([]byte("GET!\n"))
+	}
+
+	deleteFunc := func(w http.ResponseWriter, r *http.Request) {
+		w.Write([]byte("DELETE!\n"))
+	}
+
+	mux.Handle("/post/:id", servemux.MethodFuncs{
+		http.MethodGet:    getFunc,
+		http.MethodDelete: deleteFunc,
+	})
+
 	log.Fatal(http.ListenAndServe(":3000", mux))
 }

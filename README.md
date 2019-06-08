@@ -6,6 +6,7 @@
 
 * Uses a specialized [trie](https://en.wikipedia.org/wiki/Trie) data-structure for efficiency
 * Parameterized pattern matching (:segment, *)
+* Multiplexing by request method
 * Simple, drop-in replacement for `http.ServeMux`
 * No external dependencies
 * No extraneous features
@@ -33,6 +34,18 @@ mux.HandleFunc("/accounts/:id/posts", postsHandler)
 // The matched sub-path can be accessed with: servemux.Value(r, "*")
 mux.Handle("/static/*", http.StripPrefix("/static/", http.FileServer(http.Dir("./static"))))
 
+// Multiplex multiple handlers by the request method:
+mux.Handle("/post/:id", servemux.MethodHandlers{
+    http.MethodGet: getPostsHandler,
+    http.MethodDelete: deletePostsHandler,
+})
+
+// Multiplex multiple handler functions by the request method:
+mux.Handle("/user/:id", servemux.MethodFuncs{
+    http.MethodGet: getUsersFunc,
+    http.MethodDelete: deleteUsersFunc,
+})
+
 log.Fatal(http.ListenAndServe(":8080", mux))
 ```
 
@@ -55,7 +68,11 @@ Use [bombardier](https://github.com/codesenberg/bombardier) to benchmark the per
 
 ### Why doesn't ServeMux match for the request method?
 
-ServeMux routes URLs to handlers. In REST terms, it serves Web Resources at specific URLs. The request method is an orthogonal concern best handled within the handler itself. This way, the conceptual simplicity of Go (along with compatibility with the standard library) is retained and you can easily reuse code for different methods within the handler.
+`ServeMux` routes URLs to handlers. In REST terms, it serves Web Resources at specific URLs. The request method is an orthogonal concern best handled within the handler itself. This way, the conceptual simplicity of Go (along with compatibility with the standard library) is retained and you can easily reuse code for different methods within the handler.
+
+### That's reasonable, but I still want to multiplex by request method
+
+We provide convenient `MethodHandlers` and `MethodFuncs` handlers to do just that. Check out the included example for more details.
 
 ## Contributing
 
